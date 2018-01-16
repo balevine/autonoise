@@ -1,0 +1,13 @@
+require_relative 'MusicTheory'
+require_relative 'Oscillator'
+require_relative 'Instrument'
+require_relative 'Song'
+require_relative 'Track'
+require_relative 'Note'
+require_relative 'Rest'
+require_relative 'WaveFile'
+
+require_relative 'ExampleSounds'
+require_relative 'DemoSong'
+require_relative 'SweetChildOMine'
+require_relative 'SweetDreams'
