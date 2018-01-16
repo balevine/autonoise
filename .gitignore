@@ -1,2 +1,3 @@
 *.txt
 instrumentation.rb
+.DS_Store
