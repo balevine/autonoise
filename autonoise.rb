@@ -103,8 +103,12 @@ def text_converter (text_file_full_path)
   # (the number of notes in a maj/min scale across 4 octaves)
   text_tone = []
   text_code.each do |code|
-    tone = (code.to_f/128*28).ceil
-    text_tone.push(tone)
+    if code == 0
+      text_tone.push(nil)
+    else
+      tone = (code.to_f/128*28).ceil
+      text_tone.push(tone)
+    end
   end
 
   # Write notes to track
@@ -116,7 +120,12 @@ def text_converter (text_file_full_path)
       leadTrack = Track.new(voice)"
     f.puts(intro)
     text_tone.each.with_index do |tone, index|
-      note, octave = get_note_and_octave(tone, root_index)
+      if tone == nil
+        note = ''
+        octave = 0
+      else
+        note, octave = get_note_and_octave(tone, root_index)
+      end
       duration = text_duration[index]
       line = 'leadTrack.notes << Note.new("' +
                                               note + '",' +

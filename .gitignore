@@ -1,3 +1,4 @@
 *.txt
-instrumentation.rb
+*.wav
+rubysynth/instrumentation.rb
 .DS_Store
