@@ -58,7 +58,7 @@ input_file = ARGV[0]
 input = YAML.load_file(input_file)
 
 text_tone, text_duration = text_converter (input)
-
+write_track (input_data, text_tone, text_duration)
 # Get total beat durations
 song_duration = 0
 text_duration.each do |dur|
@@ -68,5 +68,6 @@ end
 puts song_duration
 
 output_path = './' + input['title'] + '.wav'
+
 generate_samples
 create_wav_file(output_path)
