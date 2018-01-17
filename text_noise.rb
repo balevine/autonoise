@@ -60,15 +60,34 @@ def text_converter (input)
   text_duration = []
   File.open(book_filename) do |file|
     text = file.read
+    # Turn line breaks into spaces
+    text.gsub!("\n"," ")
+
     # Split on ending punctuation (periods, question marks, exclamation points)
     sentences = text.split(/(?<=[?.!])/)
+
     # Convert sentences to codes
     sentences.each do |sentence|
-        word_code = convert_to_character_code(sentence)
-        # Put codes into the code array
-        text_code.push(word_code)
-        # Put the sentence lengths into a duration array
-        text_duration.push(sentence.length)
+      word_code = convert_to_character_code(sentence)
+
+      # Put codes into the code array
+      text_code.push(word_code)
+
+      # Put the sentence lengths into a duration array
+      word_count = sentence.split(' ').length
+
+      if word_count == 0
+        # Prevent divide by zero errors
+        duration = 0
+      else
+        duration = word_count
+      end
+      text_duration.push(duration)
+    end
+
+    max_duration = text_duration.max
+    text_duration.each.with_index do |dur, i|
+      text_duration[i] = max_duration/text_duration[i] unless text_duration[i] == 0
     end
   end
 
@@ -85,11 +104,15 @@ def text_converter (input)
     end
   end
 
-  return text_tone, text_duration
+  # Remove the last note, as it's usually a line ending
+  text_tone.pop
+  text_duration.pop
+
+  return text_tone, text_duration, root_index
 end
 
 def instr_setup_text (input_data)
-  input = input_data[0]
+  input = input_data
   birth_year = input['author birth year']
   death_year = input['author death year']
   bpm = death_year - birth_year

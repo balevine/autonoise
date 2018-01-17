@@ -19,7 +19,7 @@ require 'yaml'
 # - instrument vibrato LFO oscillator (type, bit rate, freq, and amplitude)
 # - instrument volume LFO oscillator (type, bit rate, freq, and amplitude)
 
-def write_track (input_data, text_tone, text_duration)
+def write_track (input_data, text_tone, text_duration, root_index)
   # Write notes to track
 
   File.open('rubysynth/instrumentation.rb', "w+") do |f|
@@ -57,8 +57,8 @@ end
 input_file = ARGV[0]
 input = YAML.load_file(input_file)
 
-text_tone, text_duration = text_converter (input)
-write_track (input_data, text_tone, text_duration)
+text_tone, text_duration, root_index = text_converter (input)
+write_track(input, text_tone, text_duration, root_index)
 # Get total beat durations
 song_duration = 0
 text_duration.each do |dur|
