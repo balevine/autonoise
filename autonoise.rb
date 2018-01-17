@@ -69,5 +69,5 @@ song_beats = beats.ceil
 
 output_path = './' + input['title'] + '.wav'
 
-# generate_samples
-# create_wav_file(output_path)
+generate_samples
+create_wav_file(output_path)
