@@ -21,20 +21,14 @@ require 'yaml'
 
 def write_track (input_data, text_tone, text_duration)
   # Write notes to track
-  input = input_data[0]
-  birth_year = input['author birth year']
-  death_year = input['author death year']
-  bpm = death_year - birth_year
-  freq = input['location long']
-  amp = input['location lat']/90
 
   File.open('rubysynth/instrumentation.rb', "w+") do |f|
-    intro = "def input_data
-      bpm = " + bpm.to_s + "
-      voice = Instrument.new(bpm, SquareOscillator.new(44100, " + freq.to_s + ", " + amp.to_s + "), [], nil, nil)
+    setup_text = instr_setup_text (input_data)
+    f.puts(setup_text)
 
-      leadTrack = Track.new(voice)"
+    intro = "leadTrack = Track.new(voice)"
     f.puts(intro)
+    
     text_tone.each.with_index do |tone, index|
       if tone == nil
         note = ''
@@ -49,11 +43,13 @@ def write_track (input_data, text_tone, text_duration)
                                               duration.to_s + ')'
       f.puts(line)
     end
+
   ending = "s = Song.new()
   s.tracks = [leadTrack]
 
   return s.nextSamples(s.sampleLength)
   end"
+
   f.puts(ending)
   end
 end

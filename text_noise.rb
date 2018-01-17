@@ -87,3 +87,17 @@ def text_converter (input)
 
   return text_tone, text_duration
 end
+
+def instr_setup_text (input_data)
+  input = input_data[0]
+  birth_year = input['author birth year']
+  death_year = input['author death year']
+  bpm = death_year - birth_year
+  freq = input['location long']
+  amp = input['location lat']/90
+  setup_text = "def input_data
+    bpm = " + bpm.to_s + "
+    voice = Instrument.new(bpm, SquareOscillator.new(44100, " + freq.to_s + ", " + amp.to_s + "), [], nil, nil)"
+
+  return setup_text
+end
