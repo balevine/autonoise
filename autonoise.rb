@@ -94,14 +94,14 @@ def text_converter (input)
   end
 
   # Convert text tone to a note on the musical scale
-  # To do this, scale the range by 28
-  # (the number of notes in a maj/min scale across 4 octaves)
+  # To do this, scale the range by 21
+  # (the number of notes in a maj/min scale across 3 octaves)
   text_tone = []
   text_code.each do |code|
     if code == 0
       text_tone.push(nil)
     else
-      tone = (code.to_f/128*14).ceil
+      tone = (code.to_f/128*21).ceil
       text_tone.push(tone)
     end
   end
