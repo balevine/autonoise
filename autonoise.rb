@@ -28,7 +28,7 @@ def write_track (input_data, text_tone, text_duration)
 
     intro = "leadTrack = Track.new(voice)"
     f.puts(intro)
-    
+
     text_tone.each.with_index do |tone, index|
       if tone == nil
         note = ''
@@ -58,6 +58,14 @@ input_file = ARGV[0]
 input = YAML.load_file(input_file)
 
 text_tone, text_duration = text_converter (input)
+
+# Get total beat durations
+song_duration = 0
+text_duration.each do |dur|
+  song_duration = song_duration + dur
+end
+
+puts song_duration
 
 output_path = './' + input['title'] + '.wav'
 generate_samples
