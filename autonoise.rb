@@ -77,24 +77,17 @@ def text_converter (text_file_full_path)
   # Get the text and parse each line
   text_code = []
   text_duration = []
-  File.open(book_filename).each do |line|
+  File.open(book_filename) do |file|
+    text = file.read
     # Split on ending punctuation (periods, question marks, exclamation points)
-    line.delete!("\n")
-    sentences = line.split(/(?<=[?.!])/)
-    # Parse each sentence into words
+    sentences = text.split(/(?<=[?.!])/)
+    # Convert sentences to codes
     sentences.each do |sentence|
-      words = sentence.split(' ')
-      # Convert words into unicode character codes
-      words.each do |word|
-        word_code = convert_to_character_code(word)
-        # Put word codes into the code array
+        word_code = convert_to_character_code(sentence)
+        # Put codes into the code array
         text_code.push(word_code)
-        # Put the word lengths into a duration array
-        text_duration.push(word.length)
-      end
-      # Put a rest in at the end of each sentence
-      text_code.push(0)
-      text_duration.push(4)
+        # Put the sentence lengths into a duration array
+        text_duration.push(sentence.length)
     end
   end
 
