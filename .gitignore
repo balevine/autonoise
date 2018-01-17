@@ -1,5 +1,6 @@
 *.txt
 *.wav
+*.jpg
 *.yaml
 rubysynth/instrumentation.rb
 .DS_Store
