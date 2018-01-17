@@ -1,5 +1,6 @@
 # Use rubysynth for tone generation and sequencing
 require_relative 'rubysynth/RubySynth'
+require 'yaml'
 
 # Notes:
 # Items to programmatically determine
@@ -55,10 +56,11 @@ def get_note_and_octave(tone, root_index)
   return note, octave
 end
 
-def text_converter (text_file_full_path)
+def text_converter (input)
+
   # Instrument 1
   # Get a book from the Gutenberg project
-  book_filename = File.basename text_file_full_path
+  book_filename = File.basename input['text file']
   current_root_path = File.expand_path(File.dirname(__FILE__))
   book_filepath = File.join(current_root_path, book_filename)
 
@@ -77,45 +79,44 @@ def text_converter (text_file_full_path)
   # Get the text and parse each line
   text_code = []
   text_duration = []
-  File.open(book_filename).each do |line|
+  File.open(book_filename) do |file|
+    text = file.read
     # Split on ending punctuation (periods, question marks, exclamation points)
-    line.delete!("\n")
-    sentences = line.split(/(?<=[?.!])/)
-    # Parse each sentence into words
+    sentences = text.split(/(?<=[?.!])/)
+    # Convert sentences to codes
     sentences.each do |sentence|
-      words = sentence.split(' ')
-      # Convert words into unicode character codes
-      words.each do |word|
-        word_code = convert_to_character_code(word)
-        # Put word codes into the code array
+        word_code = convert_to_character_code(sentence)
+        # Put codes into the code array
         text_code.push(word_code)
-        # Put the word lengths into a duration array
-        text_duration.push(word.length)
-      end
-      # Put a rest in at the end of each sentence
-      text_code.push(0)
-      text_duration.push(4)
+        # Put the sentence lengths into a duration array
+        text_duration.push(sentence.length)
     end
   end
 
   # Convert text tone to a note on the musical scale
-  # To do this, scale the range by 28
-  # (the number of notes in a maj/min scale across 4 octaves)
+  # To do this, scale the range by 21
+  # (the number of notes in a maj/min scale across 3 octaves)
   text_tone = []
   text_code.each do |code|
     if code == 0
       text_tone.push(nil)
     else
-      tone = (code.to_f/128*28).ceil
+      tone = (code.to_f/128*21).ceil
       text_tone.push(tone)
     end
   end
 
   # Write notes to track
+  birth_year = input['author birth year']
+  death_year = input['author death year']
+  bpm = death_year - birth_year
+  freq = input['location long']
+  amp = input['location lat']/90
+
   File.open('rubysynth/instrumentation.rb', "w+") do |f|
     intro = "def input_data
-      bpm = 120
-      voice = Instrument.new(bpm, SawtoothOscillator.new(44100, 220.0, 0.3), [], nil, nil)
+      bpm = " + bpm.to_s + "
+      voice = Instrument.new(bpm, SquareOscillator.new(44100, " + freq.to_s + ", " + amp.to_s + "), [], nil, nil)
 
       leadTrack = Track.new(voice)"
     f.puts(intro)
@@ -143,8 +144,10 @@ def text_converter (text_file_full_path)
   end
 end
 
-text_file_full_path = ARGV[0]
-book_title = text_converter (text_file_full_path)
+input_file = ARGV[0]
+input = YAML.load_file(input_file)
+
+book_title = text_converter(input)
 output_path = './' + book_title + '.wav'
 generate_samples
 create_wav_file(output_path)
