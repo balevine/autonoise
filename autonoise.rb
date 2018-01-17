@@ -60,14 +60,14 @@ input = YAML.load_file(input_file)
 text_tone, text_duration, root_index = text_converter (input)
 write_track(input, text_tone, text_duration, root_index)
 # Get total beat durations
-song_duration = 0
+beats = 0
 text_duration.each do |dur|
-  song_duration = song_duration + dur
+  beats = beats + (1/dur.to_f)
 end
 
-puts song_duration
+song_beats = beats.ceil
 
 output_path = './' + input['title'] + '.wav'
 
-generate_samples
-create_wav_file(output_path)
+# generate_samples
+# create_wav_file(output_path)
